@@ -1,0 +1,51 @@
+<html>
+  <head>
+  
+	<title>d3.js</title>
+
+  <script type="text/javascript" src="d3/d3.v2.js">
+  </script>
+		
+  <link href="./colorbrewer.css" rel="stylesheet" type="text/css">
+  <link href="./voronoi.css" rel="stylesheet" type="text/css">
+  		
+	</head>
+
+
+	<body>
+	
+	<h1 id="voronoi_diagram">Voronoi Tesselation</h1>
+	
+	<div class="gallery" id="chart"></div>
+
+	<script type="text/javascript" src="./d3_voronoi.js">
+	</script>
+	
+	<button id="centroid_step">One Centroid Step</button>
+	<button id="centroid_anim">Start/Stop Centroid Animation</button>
+	<button id="generate">Generate New Points</button>
+	<button id="reset">Undo Centroidal</button>
+
+	<div id="fun">
+	<p>In a Voronoi tesselation, each region corresponds to the set of points closest
+	to the a distinguished point (circle) inside the region. The initial set of 
+	distinguished points is chosen at random. </p>
+	
+	<p>Colors by <a href="http://colorbrewer.org/">Cynthia Brewer</a>. Voronoi 
+	design commonly attributed to 
+	<a href="http://en.wikipedia.org/wiki/Lejeune_Dirichlet">Lejeune Dirichlet</a> 
+	and <a href="http://en.wikipedia.org/wiki/Georgy_Voronoy">Georgy Voronoy</a>. 
+	Voronoi algorithm by <a href="http://ect.bell-labs.com/who/sjf/">Steven Fortune</a>; 
+	implementation based on work by 
+	<a href="http://blog.thejit.org/2010/02/12/voronoi-tessellation/">Nicolas Garcia Belmonte</a>. 
+	Mouseover interaction inspired by 
+	<a href="http://www.raymondhill.net/blog/?p=9">Raymond Hill</a>.</p>
+	
+	<p>Centroidal Voronoi features implemented by Dmitry Shemetov.</p>
+	</div>
+	
+  <script type="text/javascript" src="./cvt.js">
+  </script>
+	
+	</body>
+</html>
