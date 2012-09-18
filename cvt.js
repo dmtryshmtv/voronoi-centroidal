@@ -662,25 +662,31 @@ function lloyd() {
   var c,
       r = 1,
 	    motion = 0,
-	    change;
+	    change,
+	    flag;
 
-  if (border_type == "pinned") {
+  if (border_type == "pin") {
     for (var i = 0; i < verticesNew.length; i++) {
+      flag = true;
       for (var j = 0; j < bound.length; j++) {
         if (bound[j] == i) {
-          c = centroid(voronoiNew[i]);
-          change = Math.sqrt( (c[0] - verticesNew[i][0]) * 
-						                	(c[0] - verticesNew[i][0]) + 
-							                (c[1] - verticesNew[i][1]) * 
-							                (c[1] - verticesNew[i][1]) );
-							                      
-      		motion += change;
-      	  if (change > .001) {
-    			  verticesNew[i] = [c[0] * r + (1 - r) * verticesNew[i][0], 
-    			                    c[1] * r + (1 - r) * verticesNew[i][1]];
-      	  }
+          flag = false;
         }
-      }   
+      }
+        
+      if (flag) {
+        c = centroid(voronoiNew[i]);
+        change = Math.sqrt( (c[0] - verticesNew[i][0]) * 
+				                  	(c[0] - verticesNew[i][0]) + 
+					                  (c[1] - verticesNew[i][1]) * 
+					                  (c[1] - verticesNew[i][1]) );
+					                        
+    		motion += change;
+    	  if (change > .001) {
+  			  verticesNew[i] = [c[0] * r + (1 - r) * verticesNew[i][0], 
+  			                    c[1] * r + (1 - r) * verticesNew[i][1]];
+    	  }
+  	  }   
     }
   }
   else { 
