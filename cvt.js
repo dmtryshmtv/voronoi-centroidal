@@ -664,7 +664,7 @@ function lloyd() {
 	    motion = 0,
 	    change;
 
-  if (border_type == "pinned") {
+  if (border_type == "pin") {
     for (var i = 0; i < verticesNew.length; i++) {
       flag = true;
       
