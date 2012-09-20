@@ -43,9 +43,19 @@
   </form>
   
 	</div>
+
+ 	<div id="buttons" style="clear:both; padding:10px">
+	<button id="centroid_step">One Centroid Step</button>
+	<button id="centroid_anim">Start/Stop Centroid Animation</button>
+	<button id="generate">Generate New Points</button>
+	<button id="reset">Undo Centroidal</button>
+  </div>
 	
 	<script type="text/javascript" src="./voronoi.js">
 	</script>
+	
+  <script type="text/javascript" src="./cvt.js">
+  </script>
 	
 	<script type="text/javascript">
 	// the slider
@@ -58,6 +68,7 @@
 
   <script type="text/javascript">
   function border_change() {
+    pinned = 0;
     if (document.getElementById('dropbox').value == "norm") {
       if (is_run) {
         is_run = false;
@@ -83,14 +94,7 @@
       border_type = "pin";
     }
   }
-  </script>s
-	
-	<div id="buttons" style="clear:both; padding:10px">
-	<button id="centroid_step">One Centroid Step</button>
-	<button id="centroid_anim">Start/Stop Centroid Animation</button>
-	<button id="generate">Generate New Points</button>
-	<button id="reset">Undo Centroidal</button>
-  </div>
+  </script>
 
 	<div id="fun">
 	<p>In a Voronoi tesselation, each region corresponds to the set of points closest
@@ -109,9 +113,6 @@
 	
 	<p>Centroidal Voronoi features implemented by Dmitry Shemetov.</p>
 	</div>
-	
-  <script type="text/javascript" src="./cvt.js">
-  </script>
 	
 	</body>
 </html>

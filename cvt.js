@@ -1,6 +1,7 @@
 var pinned = 0,            // remembers whether we've already pushed to boundary
     border_type = "norm",  // method of computing borderz
-    bound = [];            // a list of the indices of the boundary regions
+    bound = [],            // a list of the indices of the boundary regions
+    pushpush = [];
 
 // Button behavior
 // BUTTON - Generate New Points
@@ -17,13 +18,17 @@ d3.select("#centroid_step").on("click", function () {
     pinned = 0;
 	  clipVoronoi();
 	  lloyd();
+  	voronoiNew = d3.geom.voronoi(verticesNew);
   	draw();
 	}
 	else if (border_type == "push") {
 	  pinned = 0;
 	  clipVoronoi();
 	  lloyd();
+   	voronoiNew = d3.geom.voronoi(verticesNew);
+   	draw();
  	  push_to_boundary();
+   	voronoiNew = d3.geom.voronoi(verticesNew);
   	draw();
 	}
   else {
@@ -31,13 +36,15 @@ d3.select("#centroid_step").on("click", function () {
       bound = push_to_boundary();
       pinned = 1;
     }
+    clipVoronoi();
     lloyd();
+   	voronoiNew = d3.geom.voronoi(verticesNew);
   	draw();
   }
 });
 
 
-var animation,        // intervalic playing of Lloyd
+var animation,        // runs Lloyd iteration
     is_run = false;   // remembers whether animation is running or not
 
 
@@ -45,28 +52,8 @@ var animation,        // intervalic playing of Lloyd
 d3.select("#centroid_anim").on("click", function () {		
 	if (!is_run){
 		is_run = true;
-		animation = window.setInterval(function () { 
-      if (border_type == "norm") {
-        pinned = 0;
-	      clipVoronoi();
-	      lloyd();
-      	draw();
-	    }
-	    else if (border_type == "push") {
-	      pinned = 0;
- 	      clipVoronoi();
-	      lloyd();
-     	  push_to_boundary();
-      	draw();
-	    }
-      else {
-        if (!pinned) {
-          push_to_boundary();
-          pinned = 1;
-        }
-        lloyd();
-      	draw();
-      }
+		animation = window.setInterval(function () {		
+		  document.getElementById('centroid_step').click();
 	  },25);
 	}
 	else {
@@ -447,6 +434,38 @@ function push_to_boundary() {
 }
 
 
+function push_to_boundary2() {
+  var flag,
+      j; 
+	// loop through each region and move vertices of regions that intersect
+	// the boundaries
+	for (var i = 0; i < voronoiNew.length; i++) {
+	  flag = false;
+	  j = 0;
+	  while (j < pushpush.length && !flag) {
+	    if (pushpush[j][0] == i) {
+  	    flag = true;
+  	  }
+	    j++;
+	  }
+	  if (flag) {
+	    if (pushpush[j][1] == "t") {
+	    
+	    }
+	    else if (pushpush[j][1] == "r") {
+	    
+	    }
+	    else if (pushpush[j][1] == "l") {
+	    
+	    }
+	    else if (pushpush[j][1] == "b") {
+	    
+	    }
+	  }
+	}
+}
+
+
 // takes a region and decides what borders does it intersect
 // if the region intersects on the corner, the function returns that corner 
 // point; otherwise, it projects to the closest boundary point
@@ -705,8 +724,6 @@ function lloyd() {
   		}
     }
   }
-	
-	voronoiNew = d3.geom.voronoi(verticesNew);
 	
 	return motion;
 }
