@@ -434,38 +434,6 @@ function push_to_boundary() {
 }
 
 
-function push_to_boundary2() {
-  var flag,
-      j; 
-	// loop through each region and move vertices of regions that intersect
-	// the boundaries
-	for (var i = 0; i < voronoiNew.length; i++) {
-	  flag = false;
-	  j = 0;
-	  while (j < pushpush.length && !flag) {
-	    if (pushpush[j][0] == i) {
-  	    flag = true;
-  	  }
-	    j++;
-	  }
-	  if (flag) {
-	    if (pushpush[j][1] == "t") {
-	    
-	    }
-	    else if (pushpush[j][1] == "r") {
-	    
-	    }
-	    else if (pushpush[j][1] == "l") {
-	    
-	    }
-	    else if (pushpush[j][1] == "b") {
-	    
-	    }
-	  }
-	}
-}
-
-
 // takes a region and decides what borders does it intersect
 // if the region intersects on the corner, the function returns that corner 
 // point; otherwise, it projects to the closest boundary point
@@ -624,7 +592,15 @@ function project_boundary (x,y,subject,clip) {
 					return [width,0];
 				}
 				else {
-				  return [x,0];
+				  if (newPoly[i].x <= x && x <= newPoly[j].x) {
+  				  return [x,0];
+				  }
+				  else if (newPoly[i].x > x) {
+				    return [newPoly[i].x,0];
+				  }
+				  else if (newPoly[j].x < x) {
+				    return [newPoly[j].x,0];
+				  }
 				}
 			}
 			else if (newPoly[i].intersection == "left") {
@@ -638,7 +614,15 @@ function project_boundary (x,y,subject,clip) {
           return [width,0];
 				}
 				else {
-				  return [0,y];
+				  if (newPoly[i].y >= y && y >= newPoly[j].y) {
+  				  return [0,y];
+				  }
+				  else if (newPoly[i].y < y) {
+				    return [0,newPoly[i].y];
+				  }
+				  else if (newPoly[j].y > y) {
+				    return [0,newPoly[j].y];
+				  }
 				}
 			}
 			else if (newPoly[i].intersection == "bottom") {
@@ -652,7 +636,15 @@ function project_boundary (x,y,subject,clip) {
 					return [0,0];
 				}
 				else {
-				  return [x,height];
+ 				  if (newPoly[i].x >= x && x >= newPoly[j].x) {
+  				  return [x,height];
+				  }
+				  else if (newPoly[i].x < x) {
+				    return [newPoly[i].x,height];
+				  }
+				  else if (newPoly[j].x > x) {
+				    return [newPoly[j].x,height];
+				  }
 				}
 			}
 			else if (newPoly[i].intersection == "right") {
@@ -666,7 +658,15 @@ function project_boundary (x,y,subject,clip) {
 					return [width,height];
 				}
 				else {
-				  return [width,y];
+				  if (newPoly[i].y <= y && y <= newPoly[j].y) {
+  				  return [width,y];
+				  }
+				  else if (newPoly[i].y > y) {
+				    return [width,newPoly[i].y];
+				  }
+				  else if (newPoly[j].y < y) {
+				    return [width,newPoly[j].y];
+				  }
 				}
 			}
 		}
