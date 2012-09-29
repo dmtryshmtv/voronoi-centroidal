@@ -5,6 +5,9 @@
 
   <script type="text/javascript" src="d3/d3.v2.js">
   </script>
+  
+  <script type="text/javascript" src="./delaunay.js">
+  </script>
 		
   <link href="./colorbrewer.css" rel="stylesheet" type="text/css">
   <link href="./voronoi.css" rel="stylesheet" type="text/css">
@@ -16,39 +19,42 @@
 	
 	<h1 id="voronoi_diagram">Voronoi Tesselation</h1>
 	
-	<div class="gallery" id="chart" style="float:left"></div>
+	<div class="gallery" id="chart"></div>
 
   
 
-	<div style="float:left">
+	<div>
 	Border calculation behavior:
-	<br>
-	<select id="dropbox" onchange="border_change()">
+	<select id="borderbox" onchange="border_change()">
 	<option value="norm">Normal</option>
 	<option value="push">Border Push</option>
 	<option value="pin">Border Pin</option>
 	</select>
-	
-	<br>
-	<br>
 
 	<form oninput="x.value=parseInt(a.value)">
 	Number of points:
-	<br>
 	10
+	
   <input id="pointslider" type="range" min="10" max="1000" name="a" value="50" onchange="pointslider_change()"/>
   1000
   <br>
   <output name="x" for="a" value="50"></output>
   </form>
-  
 	</div>
+	
+	<div>
+	Region clustering:
+	<select id="densitybox" onchange="density_change()">
+	<option value="constant">Constant</option>
+	<option value="0distance">Distance from (0,0)</option>
+	</select>
 
- 	<div id="buttons" style="clear:both; padding:10px">
+ 	<div id="buttons">
 	<button id="centroid_step">One Centroid Step</button>
 	<button id="centroid_anim">Start/Stop Centroid Animation</button>
 	<button id="generate">Generate New Points</button>
 	<button id="reset">Undo Centroidal</button>
+	<button id="delaunay">Show/Hide Delaunay Triangulatron</button>
   </div>
 	
 	<script type="text/javascript" src="./voronoi.js">
@@ -69,7 +75,7 @@
   <script type="text/javascript">
   function border_change() {
     pinned = 0;
-    if (document.getElementById('dropbox').value == "norm") {
+    if (document.getElementById('borderbox').value == "norm") {
       if (is_run) {
         is_run = false;
         clearInterval(animation);
@@ -77,7 +83,7 @@
       document.getElementById("reset").click();
       border_type = "norm";
     }
-    else if (document.getElementById('dropbox').value == "push") {
+    else if (document.getElementById('borderbox').value == "push") {
       if (is_run) {
         is_run = false;
         clearInterval(animation);
@@ -92,6 +98,17 @@
       }
       document.getElementById("reset").click();
       border_type = "pin";
+    }
+  }
+  </script>
+  
+  <script type="text/javascript">
+  function density_change() {
+    if (document.getElementById('densitybox').value == "constant") {
+      density = "constant";
+    }
+    else if (document.getElementById('densitybox').value == "0distance") {
+      density = "0distance";
     }
   }
   </script>

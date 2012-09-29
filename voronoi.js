@@ -41,7 +41,7 @@ function generate() {
 }
 
 function draw() {
-	svg.selectAll("circle").remove();
+	svg.selectAll("circle").remove();	
 	svg.selectAll("path").remove();
 
 	svg.attr("width", width)

@@ -1,7 +1,7 @@
 var pinned = 0,            // remembers whether we've already pushed to boundary
     border_type = "norm",  // method of computing borderz
     bound = [],            // a list of the indices of the boundary regions
-    pushpush = [];
+    density = "constant";
 
 // Button behavior
 // BUTTON - Generate New Points
@@ -26,7 +26,6 @@ d3.select("#centroid_step").on("click", function () {
 	  clipVoronoi();
 	  lloyd();
    	voronoiNew = d3.geom.voronoi(verticesNew);
-   	draw();
  	  push_to_boundary();
    	voronoiNew = d3.geom.voronoi(verticesNew);
   	draw();
@@ -41,6 +40,10 @@ d3.select("#centroid_step").on("click", function () {
    	voronoiNew = d3.geom.voronoi(verticesNew);
   	draw();
   }
+  
+  if (delaunay) {
+	  delaunay_makedraw();
+	}
 });
 
 
@@ -76,7 +79,53 @@ d3.select("#reset").on("click",function () {
 		verticesNew[i] = vertices[i].slice(0);
 	}
 	draw();
+	
+	if (delaunay) {
+	  delaunay_makedraw();
+	}
 });
+
+
+var triangles = [],
+    delaunay = 0;
+
+d3.select("#delaunay").on("click",function () {
+  
+  if (delaunay) {
+    delaunay = 0;
+    d3.selectAll(".delaunay_path").remove();  
+  }
+  else {
+    delaunay_makedraw();
+  }  
+});
+
+
+function delaunay_makedraw() {
+    var verticesNew_Vertex = [];
+    var temp_triangles = [];
+    triangles = [];
+    delaunay = 1;
+    
+	  for (var i=0; i < verticesNew.length; i++) {
+      verticesNew_Vertex.push(new Vertex(verticesNew[i][0],
+                                         verticesNew[i][1]));
+	  }
+
+    temp_triangles = triangulate(verticesNew_Vertex);
+    
+    for (var i=0; i < temp_triangles.length; i++) {
+      triangles.push([[temp_triangles[i].a.x,temp_triangles[i].a.y],
+                      [temp_triangles[i].b.x,temp_triangles[i].b.y],
+                      [temp_triangles[i].c.x,temp_triangles[i].c.y]]);
+    }
+      
+    svg.selectAll(".delaunay_path")
+	   .data(triangles)
+	   .enter().append("path")
+	    .attr("class", "delaunay_path")
+	    .attr("d", function(d) { return "M" + d.join("L") + "Z"; });
+}  
 
 
 //
@@ -676,7 +725,7 @@ function project_boundary (x,y,subject,clip) {
 
 
 // rawr
-// Lloyd's algorithm - http://en.wikipedia.org/wiki/Lloyd's_algorithm
+// Lloyd's algorithm - http://en.wikipedia.org/Lloyd/wiki's_algorithm
 function lloyd() {
   var c,
       r = 1,
@@ -694,7 +743,11 @@ function lloyd() {
       }
       
       if (flag) {
-        c = centroid(voronoiNew[i]);
+  	    // var x = Math.pow(2.71,-(vertices[i][0]*vertices[i][0] +
+           //                     vertices[i][1]*vertices[i][1]));
+           
+        var x = Math.pow(2.71,-((vertices[i][0] - width/2)/width + (vertices[i][1] - height/2)/height ));
+        c = centroid(voronoiNew[i],x);
         change = Math.sqrt( (c[0] - verticesNew[i][0]) * 
 			                    	(c[0] - verticesNew[i][0]) + 
 				                    (c[1] - verticesNew[i][1]) * 
@@ -711,7 +764,11 @@ function lloyd() {
   }
   else { 
 	  for (var i = 0; i < voronoiNew.length; i++) {	 
-      c = centroid(voronoiNew[i]);
+//	    var x = Math.pow(2.71,-(vertices[i][0]*vertices[i][0] +
+  //                            vertices[i][1]*vertices[i][1]));
+  
+      var x = Math.pow(2.71,-((vertices[i][0] - width/2)/width + (vertices[i][1] - height/2)/height ));
+      c = centroid(voronoiNew[i],x);
       change = Math.sqrt( (c[0] - verticesNew[i][0]) * 
 					              	(c[0] - verticesNew[i][0]) + 
 						              (c[1] - verticesNew[i][1]) * 
@@ -731,7 +788,11 @@ function lloyd() {
 
 // Centroid
 // Method 1 - Centroid of a polygon, formula
-function centroid (array) {
+function centroid (array,weight) {
+  if (!weight) {
+    weight = 1
+  }
+
 	var sum_x = 0,
 	    sum_y = 0,
 	    sum_area = 0;
@@ -742,13 +803,24 @@ function centroid (array) {
 				     array[(j+1) % array.length][0] * 
 				     array[j][1];
 
-		sum_x += (array[j][0] + 
-				      array[(j+1) % array.length][0]) * 
-				      region;
-		sum_y += (array[j][1] + 
-				      array[(j+1) % array.length][1]) * 
-				      region;
-		sum_area += region;
+    if (density == "constant") {
+		  sum_x += (array[j][0] + 
+				        array[(j+1) % array.length][0]) * 
+				        region;
+		  sum_y += (array[j][1] + 
+				        array[(j+1) % array.length][1]) * 
+				        region;
+		}
+		else if (density == "0distance") {
+		  sum_x += weight * (array[j][0] + 
+				        array[(j+1) % array.length][0]) * 
+				        region;
+		  sum_y += weight * (array[j][1] + 
+				        array[(j+1) % array.length][1]) * 
+				        region;
+		}
+		
+	  sum_area += region;
 	}
 
 	return [sum_x/(3*sum_area), sum_y/(3*sum_area)];

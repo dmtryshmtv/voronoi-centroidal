@@ -9,6 +9,12 @@ path {
   stroke-width: .5px;
 }
 
+.delaunay_path {
+  fill: none;
+  stroke: #FF8282;
+  stroke-width: 2px;
+}
+
 circle {
   fill: #ccc;
   stroke: #000;
