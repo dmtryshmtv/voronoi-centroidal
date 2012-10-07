@@ -3,6 +3,7 @@ var pinned = 0,            // remembers whether we've already pushed to boundary
     bound = [],            // a list of the indices of the boundary regions
     density = "constant";
 
+
 // Button behavior
 // BUTTON - Generate New Points
 d3.select("#generate").on("click", function () { 
@@ -10,7 +11,6 @@ d3.select("#generate").on("click", function () {
 	generate();
 	draw();
 });
-
 
 // BUTTON - Take One Lloyd Algorithm Step
 d3.select("#centroid_step").on("click", function () {
@@ -37,8 +37,8 @@ d3.select("#centroid_step").on("click", function () {
     }
     clipVoronoi();
     lloyd();
-   	voronoiNew = d3.geom.voronoi(verticesNew);
-  	draw();
+    voronoiNew = d3.geom.voronoi(verticesNew);
+    draw();
   }
   
   if (delaunay) {
@@ -52,10 +52,10 @@ var animation,        // runs Lloyd iteration
 
 
 // BUTTON - Start/stop a sequence of Lloyd Algorithm iterations
-d3.select("#centroid_anim").on("click", function () {		
+d3.select("#centroid_anim").on("click", function () {
 	if (!is_run){
 		is_run = true;
-		animation = window.setInterval(function () {		
+		animation = window.setInterval(function () {
 		  document.getElementById('centroid_step').click();
 	  },25);
 	}
@@ -102,31 +102,14 @@ d3.select("#delaunay").on("click",function () {
 
 
 function delaunay_makedraw() {
-    var verticesNew_Vertex = [];
-    var temp_triangles = [];
-    triangles = [];
-    delaunay = 1;
-    
-	  for (var i=0; i < verticesNew.length; i++) {
-      verticesNew_Vertex.push(new Vertex(verticesNew[i][0],
-                                         verticesNew[i][1]));
-	  }
-
-    temp_triangles = triangulate(verticesNew_Vertex);
-    
-    for (var i=0; i < temp_triangles.length; i++) {
-      triangles.push([[temp_triangles[i].a.x,temp_triangles[i].a.y],
-                      [temp_triangles[i].b.x,temp_triangles[i].b.y],
-                      [temp_triangles[i].c.x,temp_triangles[i].c.y]]);
-    }
-      
-    svg.selectAll(".delaunay_path")
-	   .data(triangles)
-	   .enter().append("path")
-	    .attr("class", "delaunay_path")
-	    .attr("d", function(d) { return "M" + d.join("L") + "Z"; });
-}  
-
+  delaunay = 1;
+  var triangles = d3.geom.delaunay(verticesNew);
+  svg.selectAll(".delaunay_path")
+    .data(triangles)
+    .enter().append("path")
+    .attr("class", "delaunay_path")
+    .attr("d", function(d) { return "M" + d.join("L") + "Z"; });
+}
 
 //
 // Utility functions
@@ -731,6 +714,10 @@ function lloyd() {
       r = 1,
 	    motion = 0,
 	    change;
+	    
+//	    if (density == "x" || density == "y") {
+//	      r = 0.1
+//	    }
 
   if (border_type == "pin") {
     for (var i = 0; i < verticesNew.length; i++) {
@@ -743,11 +730,7 @@ function lloyd() {
       }
       
       if (flag) {
-  	    // var x = Math.pow(2.71,-(vertices[i][0]*vertices[i][0] +
-           //                     vertices[i][1]*vertices[i][1]));
-           
-        var x = Math.pow(2.71,-((vertices[i][0] - width/2)/width + (vertices[i][1] - height/2)/height ));
-        c = centroid(voronoiNew[i],x);
+        c = centroid(voronoiNew[i]);
         change = Math.sqrt( (c[0] - verticesNew[i][0]) * 
 			                    	(c[0] - verticesNew[i][0]) + 
 				                    (c[1] - verticesNew[i][1]) * 
@@ -764,11 +747,7 @@ function lloyd() {
   }
   else { 
 	  for (var i = 0; i < voronoiNew.length; i++) {	 
-//	    var x = Math.pow(2.71,-(vertices[i][0]*vertices[i][0] +
-  //                            vertices[i][1]*vertices[i][1]));
-  
-      var x = Math.pow(2.71,-((vertices[i][0] - width/2)/width + (vertices[i][1] - height/2)/height ));
-      c = centroid(voronoiNew[i],x);
+      c = centroid(voronoiNew[i]);
       change = Math.sqrt( (c[0] - verticesNew[i][0]) * 
 					              	(c[0] - verticesNew[i][0]) + 
 						              (c[1] - verticesNew[i][1]) * 
@@ -788,42 +767,107 @@ function lloyd() {
 
 // Centroid
 // Method 1 - Centroid of a polygon, formula
-function centroid (array,weight) {
-  if (!weight) {
-    weight = 1
-  }
+// 
+// C_x = (1/area)*integral of x*p(x,y)
+// C_y = (1/area)*integral of y*p(x,y)
+function centroid (array) {
+	var C_x = 0,
+	    C_y = 0,
+	    area = 0,
+	    len = array.length;
+	    
+  // density p(x,y) = 1
+  // using Paul Bourke's formula 
+  // http://paulbourke.net/geometry/polyarea/
+  if (density == "constant") {
+	  for (var j = 0; j < len; j++) {
+      region = array[j][0] * 
+		           array[(j+1) % len][1] - 
+		           array[(j+1) % len][0] * 
+		           array[j][1];
 
-	var sum_x = 0,
-	    sum_y = 0,
-	    sum_area = 0;
+	    C_x += (array[j][0] + 
+			        array[(j+1) % len][0]) * 
+			        region;
+	    C_y += (array[j][1] + 
+			        array[(j+1) % len][1]) * 
+			        region;
 
-	for (var j = 0; j < array.length; j++) {
-		region = array[j][0] * 
-				     array[(j+1) % array.length][1] - 
-				     array[(j+1) % array.length][0] * 
-				     array[j][1];
-
-    if (density == "constant") {
-		  sum_x += (array[j][0] + 
-				        array[(j+1) % array.length][0]) * 
-				        region;
-		  sum_y += (array[j][1] + 
-				        array[(j+1) % array.length][1]) * 
-				        region;
-		}
-		else if (density == "0distance") {
-		  sum_x += weight * (array[j][0] + 
-				        array[(j+1) % array.length][0]) * 
-				        region;
-		  sum_y += weight * (array[j][1] + 
-				        array[(j+1) % array.length][1]) * 
-				        region;
-		}
-		
-	  sum_area += region;
+	    area += region;
+	  }
+	  return [C_x/3/area, C_y/3/area];
 	}
+	// density p(x,y) = x
+	// using Paul Bourke's second moment formula
+	// area is now like C_x above
+	// C_x = (1/area)*integral of x^2 (in Paul's notes this is I_y)
+	// C_y = (1/area)*integral of xy (this is I_xy)
+  else if (density == "x") {
+  	for (var j = 0; j < len; j++) {
+      region = array[j][0] *
+	             array[(j+1) % len][1] -
+	             array[(j+1) % len][0] *
+	             array[j][1];
 
-	return [sum_x/(3*sum_area), sum_y/(3*sum_area)];
+      area += (array[j][0] +
+		           array[(j+1) % len][0]) *
+		           region;
+		            
+      C_x += (array[j][0] *
+              array[j][0] +
+              array[j][0] *
+              array[(j+1) % len][0] +
+              array[(j+1) % len][0] *
+              array[(j+1) % len][0]) *
+              region;
+              
+      C_y += (array[j][0] *
+              array[(j+1) % len][1] +
+              2 *
+              (array[j][0] *
+               array[j][1] +
+               array[(j+1) % len][0] *
+               array[(j+1) % len][1]) +
+               array[(j+1) % len][0] *
+               array[j][1]) *
+              region;
+      
+    }
+    return [C_x/2/area, C_y/4/area];
+  }
+  else if (density == "y") {
+    for (var j = 0; j < len; j++) {
+      region = array[j][0] *
+	             array[(j+1) % len][1] -
+	             array[(j+1) % len][0] *
+	             array[j][1];
+
+      area += (array[j][1] +
+		           array[(j+1) % len][1]) *
+		           region;
+		            
+      C_y += (array[j][1] *
+              array[j][1] +
+              array[j][1] *
+              array[(j+1) % len][1] +
+              array[(j+1) % len][1] *
+              array[(j+1) % len][1]) *
+              region;
+              
+      C_x += (array[j][0] *
+              array[(j+1) % len][1] +
+              2 *
+              (array[j][0] *
+               array[j][1] +
+               array[(j+1) % len][0] *
+               array[(j+1) % len][1]) +
+               array[(j+1) % len][0] *
+               array[j][1]) *
+              region;
+      
+    }
+    return [C_x/4/area, C_y/2/area];
+  }
 }
 
 // Method 2 - Integration

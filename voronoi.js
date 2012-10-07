@@ -46,7 +46,7 @@ function draw() {
 
 	svg.attr("width", width)
 	   .attr("height", height)
-   	 .attr("class", "PiYG")
+   	 .attr("class", "Spectral")
    	 .on("mouseover", update);
 
 	svg.selectAll("path")

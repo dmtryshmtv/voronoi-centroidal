@@ -6,12 +6,9 @@
   <script type="text/javascript" src="d3/d3.v2.js">
   </script>
   
-  <script type="text/javascript" src="./delaunay.js">
-  </script>
-		
   <link href="./colorbrewer.css" rel="stylesheet" type="text/css">
   <link href="./voronoi.css" rel="stylesheet" type="text/css">
-  		
+  
 	</head>
 
 
@@ -20,8 +17,6 @@
 	<h1 id="voronoi_diagram">Voronoi Tesselation</h1>
 	
 	<div class="gallery" id="chart"></div>
-
-  
 
 	<div>
 	Border calculation behavior:
@@ -46,7 +41,8 @@
 	Region clustering:
 	<select id="densitybox" onchange="density_change()">
 	<option value="constant">Constant</option>
-	<option value="0distance">Distance from (0,0)</option>
+	<option value="x">p(x,y) = x</option>
+	<option value="y">p(x,y) = y</option>
 	</select>
 
  	<div id="buttons">
@@ -75,41 +71,20 @@
   <script type="text/javascript">
   function border_change() {
     pinned = 0;
-    if (document.getElementById('borderbox').value == "norm") {
-      if (is_run) {
-        is_run = false;
-        clearInterval(animation);
-      }
-      document.getElementById("reset").click();
-      border_type = "norm";
+    border_type = document.getElementById('borderbox').value;
+    
+    if (is_run) {
+      is_run = false;
+      clearInterval(animation);
     }
-    else if (document.getElementById('borderbox').value == "push") {
-      if (is_run) {
-        is_run = false;
-        clearInterval(animation);
-      }
-      document.getElementById("reset").click();
-      border_type = "push";
-    }
-    else {
-      if (is_run) {
-        is_run = false;
-        clearInterval(animation);
-      }
-      document.getElementById("reset").click();
-      border_type = "pin";
-    }
+    
+    document.getElementById("reset").click();
   }
   </script>
   
   <script type="text/javascript">
   function density_change() {
-    if (document.getElementById('densitybox').value == "constant") {
-      density = "constant";
-    }
-    else if (document.getElementById('densitybox').value == "0distance") {
-      density = "0distance";
-    }
+    density = document.getElementById('densitybox').value;
   }
   </script>
 
