@@ -1,46 +1,43 @@
-// Global Variables
-var width = 960,  // width of canvas
-    height = 500, // height of canvas
-    n = 50;       // number of points
-
-// Global Arrays
+// ----- GLOBAL VARIABLES -----
+var width = 960,    // -canvas width
+    height = 500,   // -canvas height
+    n = 50;         // -number of regions
+    
 var vertices = [],    // contains the initial random set of  vertices
     verticesNew = [], // contains the post-lloyd set of vertices
     voronoi,          // contains the initial random voronoi regions
     voronoiNew = [],  // contains the post-lloyd set of voronoi regions
     svg = d3.select("#chart").append("svg");  // canvas variable
 
-generate();
-draw();
+generateNewVoronoi();
+drawVoronoi();
 
-function generate() {
+// ----- DRAWING FUNCTIONS -----
+function generateNewVoronoi() {
   // get an array of randomized coordinates
 	vertices = d3.range(n).map(function(d) {
 	  return [Math.random() * width, Math.random() * height];
 	});
 	
-	// create a voronoi array
+	// compute a voronoi array
 	voronoi = d3.geom.voronoi(vertices);
 	
 	verticesNew = [];
 	voronoiNew = [];
 	
-	// copy the region array (we want to preserve the old arrays 
-	// so that we can use the "UNDO" button
+	// copy the vertices and the array of regions (we want to preserve the old 
+	// arrays so that we can undo Lloyd iteration)
 	for (var i = 0; i < voronoi.length; i++) {
 		voronoiNew[i] = [];
 		for (var j = 0; j < voronoi[i].length; j++) {
 			voronoiNew[i][j] = voronoi[i][j].slice(0);
 		}
-	}
-	
-	// copy vertices
-	for (var i = 0; i < vertices.length; i++) {
-		verticesNew[i] = vertices[i].slice(0);
+    
+    verticesNew[i] = vertices[i].slice(0);
 	}
 }
 
-function draw() {
+function drawVoronoi() {
 	svg.selectAll("circle").remove();	
 	svg.selectAll("path").remove();
 
