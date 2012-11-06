@@ -1,79 +1,3 @@
-<<<<<<< HEAD
-var pinned = 0,            // remembers whether we've already pushed to boundary
-    border_type = "norm",  // method of computing borderz
-    bound = [];            // a list of the indices of the boundary regions
-
-// Button behavior
-// BUTTON - Generate New Points
-d3.select("#generate").on("click", function () { 
-  pinned = 0;
-	generate();
-	draw();
-});
-
-
-// BUTTON - Take One Lloyd Algorithm Step
-d3.select("#centroid_step").on("click", function () {
-  if (border_type == "norm") {
-    pinned = 0;
-	  clipVoronoi();
-	  lloyd();
-  	draw();
-	}
-	else if (border_type == "push") {
-	  pinned = 0;
-	  clipVoronoi();
-	  lloyd();
- 	  push_to_boundary();
-  	draw();
-	}
-  else {
-    if (!pinned) {
-      bound = push_to_boundary();
-      pinned = 1;
-    }
-    lloyd();
-  	draw();
-  }
-});
-
-
-var animation,        // intervalic playing of Lloyd
-    is_run = false;   // remembers whether animation is running or not
-
-
-// BUTTON - Start/stop a sequence of Lloyd Algorithm iterations
-d3.select("#centroid_anim").on("click", function () {		
-	if (!is_run){
-		is_run = true;
-		animation = window.setInterval(function () { 
-      if (border_type == "norm") {
-        pinned = 0;
-	      clipVoronoi();
-	      lloyd();
-      	draw();
-	    }
-	    else if (border_type == "push") {
-	      pinned = 0;
- 	      clipVoronoi();
-	      lloyd();
-     	  push_to_boundary();
-      	draw();
-	    }
-      else {
-        if (!pinned) {
-          push_to_boundary();
-          pinned = 1;
-        }
-        lloyd();
-      	draw();
-      }
-	  },25);
-	}
-	else {
-		is_run = false;
-		clearInterval(animation);
-=======
 // ----- GLOBAL VARS -----
 var isPinned = 0,        // tracks if pushed centroids to the boundary
   borderType = "norm",   // tracks border behavior
@@ -140,43 +64,17 @@ d3.select("#centroid_anim").on("click", function () {
 	else {
 		isLloydRun = false;
 		clearInterval(animationLloyd);
->>>>>>> origin/gh-pages
   }
 });
 
 
-<<<<<<< HEAD
-// BUTTON - Resets the canvas to the originally generated random points
-=======
 // resets canvas to the original random set of points
->>>>>>> origin/gh-pages
 d3.select("#reset").on("click",function () {
 	for (var i = 0; i < voronoi.length; i++) {
 		voronoiNew[i] = [];
 		for (var j = 0; j < voronoi[i].length; j++) {
 			voronoiNew[i][j] = voronoi[i][j].slice(0);
 		}
-<<<<<<< HEAD
-	}
-	
-	for (var i = 0; i < vertices.length; i++) {
-		verticesNew[i] = vertices[i].slice(0);
-	}
-	draw();
-});
-
-
-//
-// Utility functions
-//
-function inBoundary(x,y) {
-	if (x < 0 || y < 0 || y > height || x > width)
-		return false;
-	return true;
-}
-
-
-=======
     
 		verticesNew[i] = vertices[i].slice(0);
 	}
@@ -227,7 +125,6 @@ function inBoundary(x,y) {
 
 // checks if line n0 -> n1 intersects with line n2 -> n3
 // if it does, returns the intersection point, else returns false
->>>>>>> origin/gh-pages
 function doesIntersect(n0, n1, n2, n3) {
   // Dot product of line vectors: n0->n1 * n2->n3
   // Or actually, this looks like determinant of [n0->n1; n2->n3] matrix
@@ -250,11 +147,7 @@ function doesIntersect(n0, n1, n2, n3) {
  				 (n1.y - n0.y) * (n0.x - n2.x)) / denom,
 		x = Math.round(n0.x + ua * (n1.x - n0.x)),
 		y = Math.round(n0.y + ua * (n1.y - n0.y));
-<<<<<<< HEAD
-		result = new Node(x, y, "y");
-=======
 		result = new PolygonNode(x, y, "y");
->>>>>>> origin/gh-pages
 
 	if (0 <= ua && ua <= 1 && 0 <= ub && ub <= 1) {
 		// Collision detected
@@ -267,12 +160,6 @@ function doesIntersect(n0, n1, n2, n3) {
 }
 
 
-<<<<<<< HEAD
-// This structure keeps the nodes, it helps keep track of which points were added
-// and where and whether they were an entry point or an exit point (for the CCW
-// polygon)
-function Node(x,y,intersection,entry,exit) {
-=======
 // computes euclidean distance
 function distance(n0,n1) {
 	return Math.sqrt((n0.x - n1.x) * (n0.x - n1.x) + 
@@ -286,7 +173,6 @@ function distance(n0,n1) {
 // -bool if it's an entrance point (CCW polygon)
 // -bool if it's an exit point (CCW polygon)
 function PolygonNode(x,y,intersection,entry,exit) {
->>>>>>> origin/gh-pages
 	this.x = x;
 	this.y = y;
 	this.intersection = intersection ? intersection : false;
@@ -306,23 +192,6 @@ function PolygonNode(x,y,intersection,entry,exit) {
 	}
 }
 
-<<<<<<< HEAD
-
-function toNodes(array) {
-	var nodeArray = [];
-	for (var i=0; i < array.length; i++) {
-    nodeArray.push(new Node(array[i][0], array[i][1], false, false,	false));
-	}
-	
-	return nodeArray;
-}
-
-
-// computes euclidean distance
-function distance(n0,n1) {
-	return Math.sqrt((n0.x - n1.x) * (n0.x - n1.x) + 
-      						 (n0.y - n1.y) * (n0.y - n1.y));
-=======
 // converts an array of points into an array of PolygonNodes
 function toPolygonNodes(array) {
 	var PolygonNodeArray = [];
@@ -333,22 +202,15 @@ function toPolygonNodes(array) {
 	}
 	
 	return PolygonNodeArray;
->>>>>>> origin/gh-pages
 }
 
 
 // Polygon clipping
 function clipVoronoi () {
-<<<<<<< HEAD
-	var rectangle =  [[0,0],[0,height],[width,height],[width,0]];
-	var j;
-	
-=======
 	var rectangle =  [[0,0],[0,height],[width,height],[width,0]],
       j;
 	
 	
->>>>>>> origin/gh-pages
 	// loop through each region and clip each polygon
 	// to the rectangle; first check if the region is all inBoundary, though
 	for (var i = 0; i < voronoiNew.length; i++) {
@@ -367,23 +229,6 @@ function clipVoronoi () {
 // not a generalized function, just works for arbitrary counter-clockwise 
 // oriented polygons and a rectangle
 function polyclip (subject,clip) {
-<<<<<<< HEAD
-	var nodesPoly = toNodes(subject),
-	    nodesRect = toNodes(clip),
-  	  newPoly = [],
-	    clipped = [],
-      j;
-
-	for (var i = 0; i < nodesPoly.length; i++)
-	{
-		// if the point is in boundary, keep it
-		if (inBoundary(nodesPoly[i].x, nodesPoly[i].y)) {
-			newPoly.push(nodesPoly[i]);
-		
-			// if the next point is out, then we're exiting
-			if (!inBoundary(nodesPoly[(i+1) % nodesPoly.length].x, 
-							nodesPoly[(i+1) % nodesPoly.length].y)) {
-=======
 	var nodesPolygon = toPolygonNodes(subject),
 	    nodesRectangle = toPolygonNodes(clip),
   	  arrayPolygon = [],
@@ -399,21 +244,11 @@ function polyclip (subject,clip) {
 			// if the next point is out, then we're exiting
 			if (!inBoundary(nodesPolygon[(i+1) % nodesPolygon.length].x, 
 							nodesPolygon[(i+1) % nodesPolygon.length].y)) {
->>>>>>> origin/gh-pages
 							
 							
 				// which of the four rectangle sides do we intersect?
 				j = 0;
 				do {
-<<<<<<< HEAD
-					result = doesIntersect(nodesPoly[i], 
-										   nodesPoly[(i+1) % nodesPoly.length],
-										   nodesRect[j], 
-										   nodesRect[(j+1) % nodesRect.length]);
-					j++;
-				}
-				while (j < nodesRect.length && !result);
-=======
 					result = doesIntersect(nodesPolygon[i], 
 										   nodesPolygon[(i+1) % nodesPolygon.length],
 										   nodesRectangle[j], 
@@ -421,7 +256,6 @@ function polyclip (subject,clip) {
 					j++;
 				}
 				while (j < nodesRectangle.length && !result);
->>>>>>> origin/gh-pages
 				
 				result.updateExit();
 				if (result.x == 0) {
@@ -436,36 +270,18 @@ function polyclip (subject,clip) {
 				else {
 					result.updateIntersection("bottom");
 				}
-<<<<<<< HEAD
-				newPoly.push(result);
-=======
 				arrayPolygon.push(result);
->>>>>>> origin/gh-pages
 			}
 		}
 		// otherwise, we are out of the boundary, so don't add the point
 		else {
 			// still, check if the next point is in; then we're entering
-<<<<<<< HEAD
-			if (inBoundary(nodesPoly[(i+1) % nodesPoly.length].x, 
-						   nodesPoly[(i+1) % nodesPoly.length].y)) {
-=======
 			if (inBoundary(nodesPolygon[(i+1) % nodesPolygon.length].x, 
 						   nodesPolygon[(i+1) % nodesPolygon.length].y)) {
->>>>>>> origin/gh-pages
 							
 				// which rectangle side do we intersect?
 				j = 0;
 				do {
-<<<<<<< HEAD
-					result = doesIntersect(nodesPoly[i], 
-										   nodesPoly[(i+1) % nodesPoly.length],
-										   nodesRect[j], 
-										   nodesRect[(j+1) % nodesRect.length]);
-					j++;
-				}
-				while (j < nodesRect.length && !result);
-=======
 					result = doesIntersect(nodesPolygon[i], 
 										   nodesPolygon[(i+1) % nodesPolygon.length],
 										   nodesRectangle[j], 
@@ -473,7 +289,6 @@ function polyclip (subject,clip) {
 					j++;
 				}
 				while (j < nodesRectangle.length && !result);
->>>>>>> origin/gh-pages
 				
 				result.updateEntry();
 				if (result.x == 0) {
@@ -488,11 +303,7 @@ function polyclip (subject,clip) {
 				else {
 					result.updateIntersection("bottom");
 				}
-<<<<<<< HEAD
-				newPoly.push(result);
-=======
 				arrayPolygon.push(result);
->>>>>>> origin/gh-pages
 			}
 			// degenerate case - we're out of boundary and the next point is out of
 			// boundary, but we might still intersect the corner bit without having 
@@ -501,19 +312,11 @@ function polyclip (subject,clip) {
 				var a = [], k = 0;
 				
 				// check if we intersect any rectangle sides
-<<<<<<< HEAD
-				for (var j = 0; j < nodesRect.length; j++) {
-					result = doesIntersect(nodesPoly[i], 
-										   nodesPoly[(i+1) % nodesPoly.length],
-										   nodesRect[j], 
-										   nodesRect[(j+1) % nodesRect.length]);
-=======
 				for (var j = 0; j < nodesRectangle.length; j++) {
 					result = doesIntersect(nodesPolygon[i], 
 										   nodesPolygon[(i+1) % nodesPolygon.length],
 										   nodesRectangle[j], 
 										   nodesRectangle[(j+1) % nodesRectangle.length]);
->>>>>>> origin/gh-pages
 										   
 					if (result) {
 						if (result.x == 0) {
@@ -536,19 +339,6 @@ function polyclip (subject,clip) {
 				// if we did intersect sides (and it's gonna be max 2 sides), check 
 				// which side is intersected first
 				if (a.length > 0) {
-<<<<<<< HEAD
-					if (distance(nodesPoly[i],a[0]) < distance(nodesPoly[i],a[1])) {
-						a[0].updateEntry();
-						newPoly.push(a[0]);
-						a[1].updateExit();
-						newPoly.push(a[1]);
-					}
-					else {
-						a[1].updateEntry();
-						newPoly.push(a[1]);
-						a[0].updateExit();
-						newPoly.push(a[0]);
-=======
 					if (distance(nodesPolygon[i],a[0]) < distance(nodesPolygon[i],a[1])) {
 						a[0].updateEntry();
 						arrayPolygon.push(a[0]);
@@ -560,7 +350,6 @@ function polyclip (subject,clip) {
 						arrayPolygon.push(a[1]);
 						a[0].updateExit();
 						arrayPolygon.push(a[0]);
->>>>>>> origin/gh-pages
 					}
 				}
 			}
@@ -573,21 +362,12 @@ function polyclip (subject,clip) {
 	    j = 0;
 	
 	// now we need to add rectangle corners, clipped will be the final array
-<<<<<<< HEAD
-	// and newPoly contains all the fixed points without corners
-	while (i < newPoly.length) {
-	  // so if a point is an entry, we need to add corners before we enter
-		if (newPoly[i].entry) {
-			if (i - 1 < 0) {
-				j = newPoly.length - 1;
-=======
 	// and arrayPolygon contains all the fixed points without corners
 	while (i < arrayPolygon.length) {
 	  // so if a point is an entry, we need to add corners before we enter
 		if (arrayPolygon[i].entry) {
 			if (i - 1 < 0) {
 				j = arrayPolygon.length - 1;
->>>>>>> origin/gh-pages
 			}
 			else {
 				j = i - 1;
@@ -596,34 +376,13 @@ function polyclip (subject,clip) {
 		  // since we're entering, the point before must've exited; did they come
 		  // from the same side of the rectangle? if not, determine which and 
 		  // determine, case by case, which corners are needed
-<<<<<<< HEAD
-			if (newPoly[i].intersection != newPoly[j].intersection) {
-				if (newPoly[i].intersection == "top") {
-					if (newPoly[j].intersection == "left") {
-=======
 			if (arrayPolygon[i].intersection != arrayPolygon[j].intersection) {
 				if (arrayPolygon[i].intersection == "top") {
 					if (arrayPolygon[j].intersection == "left") {
->>>>>>> origin/gh-pages
 						clipped.push([0,height]);
 						clipped.push([width,height]);
 						clipped.push([width,0]);
 					}
-<<<<<<< HEAD
-					else if (newPoly[j].intersection == "bottom") {
-						clipped.push([width,height]);
-						clipped.push([width,0]);
-					}
-					else if (newPoly[j].intersection == "right") {
-						clipped.push([width,0]);
-					}
-				}
-				else if (newPoly[i].intersection == "left") {
-					if (newPoly[j].intersection == "top") {
-						clipped.push([0,0]);
-					}
-					else if (newPoly[j].intersection == "bottom") {
-=======
 					else if (arrayPolygon[j].intersection == "bottom") {
 						clipped.push([width,height]);
 						clipped.push([width,0]);
@@ -637,31 +396,15 @@ function polyclip (subject,clip) {
 						clipped.push([0,0]);
 					}
 					else if (arrayPolygon[j].intersection == "bottom") {
->>>>>>> origin/gh-pages
 						clipped.push([width,height]);
 						clipped.push([width,0]);
 						clipped.push([0,0]);
 					}
-<<<<<<< HEAD
-					else if (newPoly[j].intersection == "right") {
-=======
 					else if (arrayPolygon[j].intersection == "right") {
->>>>>>> origin/gh-pages
 						clipped.push([width,0]);
 						clipped.push([0,0]);
 					}
 				}
-<<<<<<< HEAD
-				else if (newPoly[i].intersection == "bottom") {
-					if (newPoly[j].intersection == "top") {
-						clipped.push([0,0]);
-						clipped.push([0,height]);
-					}
-					else if (newPoly[j].intersection == "left") {
-						clipped.push([0,height]);
-					}
-					else if (newPoly[j].intersection == "right") {
-=======
 				else if (arrayPolygon[i].intersection == "bottom") {
 					if (arrayPolygon[j].intersection == "top") {
 						clipped.push([0,0]);
@@ -671,55 +414,33 @@ function polyclip (subject,clip) {
 						clipped.push([0,height]);
 					}
 					else if (arrayPolygon[j].intersection == "right") {
->>>>>>> origin/gh-pages
 						clipped.push([width,0]);
 						clipped.push([0,0]);
 						clipped.push([0,height]);
 					}
 				}
-<<<<<<< HEAD
-				else if (newPoly[i].intersection == "right") {
-					if (newPoly[j].intersection == "top") {
-=======
 				else if (arrayPolygon[i].intersection == "right") {
 					if (arrayPolygon[j].intersection == "top") {
->>>>>>> origin/gh-pages
 						clipped.push([0,0]);
 						clipped.push([0,height]);
 						clipped.push([width,height]);
 					}
-<<<<<<< HEAD
-					else if (newPoly[j].intersection == "left") {
-						clipped.push([0,height]);
-						clipped.push([width,height]);
-					}
-					else if (newPoly[j].intersection == "bottom") {
-=======
 					else if (arrayPolygon[j].intersection == "left") {
 						clipped.push([0,height]);
 						clipped.push([width,height]);
 					}
 					else if (arrayPolygon[j].intersection == "bottom") {
->>>>>>> origin/gh-pages
 						clipped.push([width,height]);
 					}
 				}
 			}
 			
-<<<<<<< HEAD
-			clipped.push([newPoly[i].x,newPoly[i].y]);
-=======
 			clipped.push([arrayPolygon[i].x,arrayPolygon[i].y]);
->>>>>>> origin/gh-pages
 		}
 		// otherwise, the point is just an interior point or an exit point
 		// so add it
 		else {
-<<<<<<< HEAD
-			clipped.push([newPoly[i].x,newPoly[i].y])
-=======
 			clipped.push([arrayPolygon[i].x,arrayPolygon[i].y])
->>>>>>> origin/gh-pages
 		}
 		i++;
 	}
@@ -731,19 +452,11 @@ function polyclip (subject,clip) {
 // This function takes the regions that intersect the boundary and projects 
 // their vertices to the boundary. If there is a corner involved, then the 
 // point moves to the corner.
-<<<<<<< HEAD
-function push_to_boundary() {
-  var rectangle = [[0,0],[0,height],[width,height],[width,0]],
-      temp,
-      j,
-      bound = [];
-=======
 function pushToBoundary() {
   var rectangle = [[0,0],[0,height],[width,height],[width,0]],
       temp,
       j,
       boundaryPolygons = [];
->>>>>>> origin/gh-pages
 	
 	// loop through each region and move vertices of regions that intersect
 	// the boundaries
@@ -753,44 +466,18 @@ function pushToBoundary() {
 			j++;
 		}
 		if (j < voronoiNew[i].length && !inBoundary(voronoiNew[i][j][0],voronoiNew[i][j][1])) {
-<<<<<<< HEAD
-			verticesNew[i] = project_boundary(verticesNew[i][0],verticesNew[i][1],voronoiNew[i],rectangle);
-			bound.push(i);
-		}
-	}
-	
-	return bound;
-=======
 			verticesNew[i] = projectToBoundary(verticesNew[i][0],verticesNew[i][1],voronoiNew[i],rectangle);
 			boundaryPolygons.push(i);
 		}
 	}
 	
 	return boundaryPolygons;
->>>>>>> origin/gh-pages
 }
 
 
 // takes a region and decides what borders does it intersect
 // if the region intersects on the corner, the function returns that corner 
 // point; otherwise, it projects to the closest boundary point
-<<<<<<< HEAD
-function project_boundary (x,y,subject,clip) {
-	var nodesPoly = toNodes(subject),
-	    nodesRect = toNodes(clip),
-  	  newPoly = [],
-      j;
-
-	for (var i = 0; i < nodesPoly.length; i++)
-	{
-		// if the point is in boundary, keep it
-		if (inBoundary(nodesPoly[i].x, nodesPoly[i].y)) {
-			newPoly.push(nodesPoly[i]);
-		
-			// if the next point is out, then we're exiting
-			if (!inBoundary(nodesPoly[(i+1) % nodesPoly.length].x, 
-							nodesPoly[(i+1) % nodesPoly.length].y)) {
-=======
 function projectToBoundary (x,y,subject,clip) {
 	var nodesPolygon = toPolygonNodes(subject),
 	    nodesRectangle = toPolygonNodes(clip),
@@ -806,21 +493,11 @@ function projectToBoundary (x,y,subject,clip) {
 			// if the next point is out, then we're exiting
 			if (!inBoundary(nodesPolygon[(i+1) % nodesPolygon.length].x, 
 							nodesPolygon[(i+1) % nodesPolygon.length].y)) {
->>>>>>> origin/gh-pages
 							
 							
 				// which of the four rectangle sides do we intersect?
 				j = 0;
 				do {
-<<<<<<< HEAD
-					result = doesIntersect(nodesPoly[i], 
-										   nodesPoly[(i+1) % nodesPoly.length],
-										   nodesRect[j], 
-										   nodesRect[(j+1) % nodesRect.length]);
-					j++;
-				}
-				while (j < nodesRect.length && !result);
-=======
 					result = doesIntersect(nodesPolygon[i], 
 										   nodesPolygon[(i+1) % nodesPolygon.length],
 										   nodesRectangle[j], 
@@ -828,7 +505,6 @@ function projectToBoundary (x,y,subject,clip) {
 					j++;
 				}
 				while (j < nodesRectangle.length && !result);
->>>>>>> origin/gh-pages
 				
 				result.updateExit();
 				if (result.x == 0) {
@@ -843,36 +519,18 @@ function projectToBoundary (x,y,subject,clip) {
 				else {
 					result.updateIntersection("bottom");
 				}
-<<<<<<< HEAD
-				newPoly.push(result);
-=======
 				arrayPolygon.push(result);
->>>>>>> origin/gh-pages
 			}
 		}
 		// otherwise, we are out of the boundary, so don't add the point
 		else {
 			// still, check if the next point is in; then we're entering
-<<<<<<< HEAD
-			if (inBoundary(nodesPoly[(i+1) % nodesPoly.length].x, 
-						   nodesPoly[(i+1) % nodesPoly.length].y)) {
-=======
 			if (inBoundary(nodesPolygon[(i+1) % nodesPolygon.length].x, 
 						   nodesPolygon[(i+1) % nodesPolygon.length].y)) {
->>>>>>> origin/gh-pages
 							
 				// which rectangle side do we intersect?
 				j = 0;
 				do {
-<<<<<<< HEAD
-					result = doesIntersect(nodesPoly[i], 
-										   nodesPoly[(i+1) % nodesPoly.length],
-										   nodesRect[j], 
-										   nodesRect[(j+1) % nodesRect.length]);
-					j++;
-				}
-				while (j < nodesRect.length && !result);
-=======
 					result = doesIntersect(nodesPolygon[i], 
 										   nodesPolygon[(i+1) % nodesPolygon.length],
 										   nodesRectangle[j], 
@@ -880,7 +538,6 @@ function projectToBoundary (x,y,subject,clip) {
 					j++;
 				}
 				while (j < nodesRectangle.length && !result);
->>>>>>> origin/gh-pages
 				
 				result.updateEntry();
 				if (result.x == 0) {
@@ -895,11 +552,7 @@ function projectToBoundary (x,y,subject,clip) {
 				else {
 					result.updateIntersection("bottom");
 				}
-<<<<<<< HEAD
-				newPoly.push(result);
-=======
 				arrayPolygon.push(result);
->>>>>>> origin/gh-pages
 			}
 			// degenerate case - we're out of boundary and the next point is out of
 			// boundary, but we might still intersect the corner bit without having 
@@ -908,19 +561,11 @@ function projectToBoundary (x,y,subject,clip) {
 				var a = [], k = 0;
 				
 				// check if we intersect any rectangle sides
-<<<<<<< HEAD
-				for (var j = 0; j < nodesRect.length; j++) {
-					result = doesIntersect(nodesPoly[i], 
-										   nodesPoly[(i+1) % nodesPoly.length],
-										   nodesRect[j], 
-										   nodesRect[(j+1) % nodesRect.length]);
-=======
 				for (var j = 0; j < nodesRectangle.length; j++) {
 					result = doesIntersect(nodesPolygon[i], 
 										   nodesPolygon[(i+1) % nodesPolygon.length],
 										   nodesRectangle[j], 
 										   nodesRectangle[(j+1) % nodesRectangle.length]);
->>>>>>> origin/gh-pages
 										   
 					if (result) {
 						if (result.x == 0) {
@@ -943,19 +588,6 @@ function projectToBoundary (x,y,subject,clip) {
 				// if we did intersect sides (and it's gonna be max 2 sides), check 
 				// which side is intersected first
 				if (a.length > 0) {
-<<<<<<< HEAD
-					if (distance(nodesPoly[i],a[0]) < distance(nodesPoly[i],a[1])) {
-						a[0].updateEntry();
-						newPoly.push(a[0]);
-						a[1].updateExit();
-						newPoly.push(a[1]);
-					}
-					else {
-						a[1].updateEntry();
-						newPoly.push(a[1]);
-						a[0].updateExit();
-						newPoly.push(a[0]);
-=======
 					if (distance(nodesPolygon[i],a[0]) < distance(nodesPolygon[i],a[1])) {
 						a[0].updateEntry();
 						arrayPolygon.push(a[0]);
@@ -967,172 +599,11 @@ function projectToBoundary (x,y,subject,clip) {
 						arrayPolygon.push(a[1]);
 						a[0].updateExit();
 						arrayPolygon.push(a[0]);
->>>>>>> origin/gh-pages
 					}
 				}
 			}
 		}
 	}
-<<<<<<< HEAD
-	
-	// index
-	// j exists to loop the index around to the end of the array
-	var i = 0,
-	    j = 0;
-	
-	// now we need find which boundaries we actually intersected
-	while (i < newPoly.length) {
-	  // so if a point is an entry, we need to add corners before we enter
-		if (newPoly[i].entry) {
-			if (i - 1 < 0) {
-				j = newPoly.length - 1;
-			}
-			else {
-				j = i - 1;
-			}
-		
-		  // bunch of cases to determine which side to push the vertex to
-			if (newPoly[i].intersection == "top") {
-				if (newPoly[j].intersection == "left") {
-				  return [width,height];
-				}
-				else if (newPoly[j].intersection == "bottom") {
-					return [width,0];
-				}
-				else if (newPoly[j].intersection == "right") {
-					return [width,0];
-				}
-				else {
-				  return [x,0];
-				}
-			}
-			else if (newPoly[i].intersection == "left") {
-				if (newPoly[j].intersection == "top") {
-					return [0,0];
-				}
-				else if (newPoly[j].intersection == "bottom") {
-          return [width,0];
-				}
-				else if (newPoly[j].intersection == "right") {
-          return [width,0];
-				}
-				else {
-				  return [0,y];
-				}
-			}
-			else if (newPoly[i].intersection == "bottom") {
-				if (newPoly[j].intersection == "top") {
-					return [0,0];
-				}
-				else if (newPoly[j].intersection == "left") {
-					return [0,height];
-				}
-				else if (newPoly[j].intersection == "right") {
-					return [0,0];
-				}
-				else {
-				  return [x,height];
-				}
-			}
-			else if (newPoly[i].intersection == "right") {
-				if (newPoly[j].intersection == "top") {
-					return [0,height];
-				}
-				else if (newPoly[j].intersection == "left") {
-					return [0,height];
-				}
-				else if (newPoly[j].intersection == "bottom") {
-					return [width,height];
-				}
-				else {
-				  return [width,y];
-				}
-			}
-		}
-		i++;
-	}
-}
-
-
-//
-// Lloyd's algorithm - http://en.wikipedia.org/wiki/Lloyd's_algorithm
-function lloyd() {
-  var c,
-      r = 1,
-	    motion = 0,
-	    change,
-	    flag;
-
-  if (border_type == "pin") {
-    for (var i = 0; i < verticesNew.length; i++) {
-      flag = true;
-      for (var j = 0; j < bound.length; j++) {
-        if (bound[j] == i) {
-          flag = false;
-        }
-      }
-        
-      if (flag) {
-        c = centroid(voronoiNew[i]);
-        change = Math.sqrt( (c[0] - verticesNew[i][0]) * 
-				                  	(c[0] - verticesNew[i][0]) + 
-					                  (c[1] - verticesNew[i][1]) * 
-					                  (c[1] - verticesNew[i][1]) );
-					                        
-    		motion += change;
-    	  if (change > .001) {
-  			  verticesNew[i] = [c[0] * r + (1 - r) * verticesNew[i][0], 
-  			                    c[1] * r + (1 - r) * verticesNew[i][1]];
-    	  }
-  	  }   
-    }
-  }
-  else { 
-	  for (var i = 0; i < voronoiNew.length; i++) {	 
-      c = centroid(voronoiNew[i]);
-      change = Math.sqrt( (c[0] - verticesNew[i][0]) * 
-					              	(c[0] - verticesNew[i][0]) + 
-						              (c[1] - verticesNew[i][1]) * 
-						              (c[1] - verticesNew[i][1]) );
-						                    
-  		motion += change;
-  	  if (change > .001) {
-			  verticesNew[i] = [c[0] * r + (1 - r) * verticesNew[i][0], 
-			                    c[1] * r + (1 - r) * verticesNew[i][1]];
-  		}
-    }
-  }
-	
-	voronoiNew = d3.geom.voronoi(verticesNew);
-	
-	return motion;
-}
-
-
-// Centroid
-// Method 1 - Centroid of a polygon, formula
-function centroid (array) {
-	var sum_x = 0,
-	    sum_y = 0,
-	    sum_area = 0;
-
-	for (var j = 0; j < array.length; j++) {
-		region = array[j][0] * 
-				     array[(j+1) % array.length][1] - 
-				     array[(j+1) % array.length][0] * 
-				     array[j][1];
-
-		sum_x += (array[j][0] + 
-				      array[(j+1) % array.length][0]) * 
-				      region;
-		sum_y += (array[j][1] + 
-				      array[(j+1) % array.length][1]) * 
-				      region;
-		sum_area += region;
-	}
-
-	return [sum_x/(3*sum_area), sum_y/(3*sum_area)];
-=======
 	
 	// index
 	// j exists to loop the index around to the end of the array
@@ -1445,7 +916,6 @@ function computePolygonCentroid (array) {
   
     return [x/area, y/area];
   }
->>>>>>> origin/gh-pages
 }
 
 // Method 2 - Integration
