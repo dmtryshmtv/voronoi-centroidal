@@ -33,7 +33,17 @@
     <output name="x" for="a" value="50"></output>
     </form>
 	</div>
-	
+
+  <br>
+  <div>
+    <select id="integralRadio" onchange="changeIntegral()">
+    <option value ="exact">Exact</option>
+    <option value ="numeric">Numeric</option>
+    </select>
+
+  </div>
+
+  <br>
 	<div>
     Region clustering:
     <select id="densityDropdown" onchange="changeDensityType()">
@@ -77,6 +87,10 @@
     
     function changeDensityType() {
       densityType = document.getElementById('densityDropdown').value;
+    }
+
+    function changeIntegral() {
+      integralType = document.getElementById('integralRadio').value;
     }
   </script>
 
