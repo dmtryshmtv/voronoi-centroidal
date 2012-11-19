@@ -940,19 +940,19 @@ function integratePolygonCentroid (vertex,array) {
     // area integral
     for (var i = 0; i < len; i++) {
       tri = [vertex,array[i],array[(i+1) % len]];
-      area += integrateBarthTriangle(function(x,y){return 1},tri,.1);
+      area += integrateBarthTriangle(function(x,y){return 1},tri,1);
     }
 
     // x
     for (var i = 0; i < len; i++) {
       tri = [vertex,array[i],array[(i+1) % len]];
-      x += integrateBarthTriangle(function(x,y){return x},tri,.1);
+      x += integrateBarthTriangle(function(x,y){return x},tri,1);
     }
 
     // y
     for (var i = 0; i < len; i++) {
       tri = [vertex,array[i],array[(i+1) % len]];
-      y += integrateBarthTriangle(function(x,y){return y},tri,.1);
+      y += integrateBarthTriangle(function(x,y){return y},tri,1);
     }
     
     return [x/area, y/area];
@@ -962,19 +962,19 @@ function integratePolygonCentroid (vertex,array) {
     // area integral
     for (var i = 0; i < len; i++) {
       tri = [vertex,array[i],array[(i+1) % len]];
-      area += integrateBarthTriangle(function(x,y){return x},tri,.1);
+      area += integrateBarthTriangle(function(x,y){return x},tri,1);
     }
 
     // x
     for (var i = 0; i < len; i++) {
       tri = [vertex,array[i],array[(i+1) % len]];
-      x += integrateBarthTriangle(function(x,y){return x*x},tri,.1);
+      x += integrateBarthTriangle(function(x,y){return x*x},tri,1);
     }
 
     // y
     for (var i = 0; i < len; i++) {
       tri = [vertex,array[i],array[(i+1) % len]];
-      y += integrateBarthTriangle(function(x,y){return x*y},tri,.1);
+      y += integrateBarthTriangle(function(x,y){return x*y},tri,1);
     }
     
     return [x/area, y/area];
@@ -983,19 +983,19 @@ function integratePolygonCentroid (vertex,array) {
     // area integral
     for (var i = 0; i < len; i++) {
       tri = [vertex,array[i],array[(i+1) % len]];
-      area += integrateBarthTriangle(function(x,y){return y},tri,.1);
+      area += integrateBarthTriangle(function(x,y){return y},tri,1);
     }
 
     // x
     for (var i = 0; i < len; i++) {
       tri = [vertex,array[i],array[(i+1) % len]];
-      x += integrateBarthTriangle(function(x,y){return x*y},tri,.1);
+      x += integrateBarthTriangle(function(x,y){return x*y},tri,1);
     }
 
     // y
     for (var i = 0; i < len; i++) {
       tri = [vertex,array[i],array[(i+1) % len]];
-      y += integrateBarthTriangle(function(x,y){return y*y},tri,.1);
+      y += integrateBarthTriangle(function(x,y){return y*y},tri,1);
     }
     
     return [x/area, y/area];
@@ -1007,7 +1007,7 @@ function integratePolygonCentroid (vertex,array) {
       area += integrateBarthTriangle(function(x,y){
         d1 = Math.abs(50*Math.sin(Math.PI/width*2*x)) + 1;
         d2 = Math.abs(50*Math.sin(Math.PI/width*2*y)) + 1;
-        return (d1*d2)},tri,.1);
+        return (d1*d2)},tri,1);
     }
 
     // x
@@ -1016,7 +1016,7 @@ function integratePolygonCentroid (vertex,array) {
       x += integrateBarthTriangle(function(x,y){
         d1 = Math.abs(50*Math.sin(Math.PI/width*2*x)) + 1;
         d2 = Math.abs(50*Math.sin(Math.PI/width*2*y)) + 1;
-        return x*(d1*d2)},tri,.1);
+        return x*(d1*d2)},tri,1);
     }
 
     // y
@@ -1025,7 +1025,7 @@ function integratePolygonCentroid (vertex,array) {
       y += integrateBarthTriangle(function(x,y){
         d1 = Math.abs(50*Math.sin(Math.PI/width*2*x)) + 1;
         d2 = Math.abs(50*Math.sin(Math.PI/width*2*y)) + 1;
-        return y*(d1*d2)},tri,.1);
+        return y*(d1*d2)},tri,1);
     }
     
     return [x/area, y/area];
@@ -1129,7 +1129,7 @@ function integrateBarthTriangle(func,tri,eps) {
     
     currentSum *= areaWeight
   
-  } while (Math.abs(prevSum - currentSum) > eps)
+  } while (Math.abs(prevSum - currentSum)/currentSum > eps)
   
   return currentSum;
 }
